@@ -30,4 +30,7 @@ cd to Floor-Management-System/frontend
 npm i -y
 npm start
 ```
+## How to get the admin user credential?
+Delete the data of the db. The first register user will be the admin user
+
 
