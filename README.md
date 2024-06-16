@@ -1,6 +1,6 @@
 # Floor-Management-System
 
-# This project demonstrates a comprehensive approach to building an intelligent floor plan management system. It addresses various aspects, including robust authentication, efficient resource management, fault tolerance, and user-friendly interfaces. The combination of backend and frontend technologies ensures a seamless experience for both administrators and users.
+This project demonstrates a comprehensive approach to building an intelligent floor plan management system. It addresses various aspects, including robust authentication, efficient resource management, fault tolerance, and user-friendly interfaces. The combination of backend and frontend technologies ensures a seamless experience for both administrators and users.
 
 ## Overview
 
@@ -16,17 +16,17 @@ Error and Exception Handling: Robust framework to handle errors and exceptions.
 System Monitoring: Real-time dashboards and logging mechanisms for performance tracking.
 Prerequisites
 
-Node.js and npm
-Python 3.x
-PostgreSQL
+Node.js // npm //
+Python 3.x //
+Sqlite3 DB //
 Django
 
 ## Installation
 
-$$ git clone https://github.com/anshukumar-729/Floor-Management-System.git
-$$ cd Floor-Management-System/backend
-$$ python3 manage.py runserver
-$$ cd Floor-Management-System/frontend
-$$ npm i -y
-$$ npm start
+git clone https://github.com/anshukumar-729/Floor-Management-System.git
+cd Floor-Management-System/backend
+python3 manage.py runserver
+cd Floor-Management-System/frontend
+npm i -y
+npm start
 
