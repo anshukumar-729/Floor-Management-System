@@ -39,9 +39,9 @@ class MeetingRoom(models.Model):
     name = models.CharField(primary_key=True, max_length=100)  # Ensure unique names for rooms
     capacity = models.IntegerField(default=0)
     floor = models.IntegerField(default=0)
-    available = models.BooleanField(default=True)
-    number_of_people = models.IntegerField(default=0)
-    booked_by = models.CharField(max_length=100, blank=True)
+    available = models.BooleanField(default=True, null=True)
+    number_of_people = models.IntegerField(default=0, null=True)
+    booked_by = models.CharField(max_length=100, blank=True, null=True)
     in_time = models.DateTimeField(null=True, blank=True)  # Allow null values
     out_time = models.DateTimeField(null=True, blank=True)  # Allow null values
 

@@ -1,5 +1,3 @@
-// src/Home.js
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -26,18 +24,21 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">Welcome to Your App</h1>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-green-500">
+      <div className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-xl">
+        <h1 className="text-4xl font-bold text-gray-900 mb-6">Welcome to Your App</h1>
         
         {data ? (
-          <div className="bg-gray-200 rounded-lg p-4">
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">Data from API:</h2>
-            <pre className="text-sm text-gray-600 whitespace-pre-wrap">{JSON.stringify(data, null, 2)}</pre>
+          <div className="bg-gray-100 rounded-lg p-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Hello, {data.username}!</h2>
+            <p className="text-lg text-gray-700 mb-2">Welcome back! {localStorage.getItem('user')}</p>
+            
           </div>
         ) : (
-          <p className="text-lg text-gray-600 mt-4">Loading...</p>
+          <p className="text-xl text-gray-700 mt-6">Loading...</p>
         )}
+
+        
       </div>
     </div>
   );

@@ -1,12 +1,15 @@
 // src/Nav.js
 
-import React from 'react';
+import React, { useState } from 'react';
+import { checkAdmin } from './utils';
 
 const Nav = () => {
+  const [admin, setAdmin] = useState(checkAdmin(localStorage.getItem('accessToken')));
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
     // Redirect to login page after logout
     
     window.location.href = '/login';  // Redirects to the login page
@@ -18,10 +21,13 @@ const Nav = () => {
         <div className="flex items-center">
           
           <div className="flex space-x-4">
-            <a href="/home/" className="text-white hover:text-gray-300">Home</a>
-            <a href="/floor-plan/" className="text-white hover:text-gray-300">Floor Planning</a>
+            {admin &&
+                   <a href="/booking-requests/" className="text-white hover:text-gray-300">Booking Requests</a>
+               }
+            {!admin && <a href="/requests/" className="text-white hover:text-gray-300">My Requests</a>}
+            {/* <a href="/floor-plan/" className="text-white hover:text-gray-300">Floor Planning</a> */}
             <a href="/room-list/" className="text-white hover:text-gray-300">Room List</a>
-            <a href="/booking-requests/" className="text-white hover:text-gray-300">Sync Offline Data</a>
+            
           </div>
         </div>
         <div className="flex items-center">

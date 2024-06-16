@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { checkAdmin } from '.././utils';
 
 const BookingRequests = () => {
   const [bookingRequests, setBookingRequests] = useState([]);
@@ -8,30 +9,49 @@ const BookingRequests = () => {
   const [meetingRooms, setMeetingRooms] = useState([]);
 
   useEffect(() => {
+    if(!localStorage.getItem('accessToken') || !checkAdmin(localStorage.getItem('accessToken'))){
+        window.location.href = '/login'; 
+    }
+
     fetchBookingRequests();
     fetchMeetingRooms();
-  }, []);
+    
 
+  }, []);
+  
   const fetchBookingRequests = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/booking-requests/');
+        const token = localStorage.getItem('accessToken');
+        const response = await axios.get('http://127.0.0.1:8000/api/booking-requests/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       setBookingRequests(response.data);
     } catch (error) {
       console.error('Failed to fetch booking requests:', error);
+      window.location.href = '/login';
     }
   };
 
   const fetchMeetingRooms = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/meeting-rooms/');
+      const token = localStorage.getItem('accessToken');
+      const response = await axios.get('http://127.0.0.1:8000/api/meeting-rooms/',{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const availableRooms = response.data.filter(room => room.available);
       setMeetingRooms(availableRooms);
     } catch (error) {
       console.error('Failed to fetch meeting rooms:', error);
+      window.location.href = '/login';
     }
   };
 
   const handleAllocateRoom = async () => {
+    const token = localStorage.getItem('accessToken');
     if (selectedRequest && allocatedRoom) {
       try {
         // First, update the room to mark it as unavailable and update other fields
@@ -43,6 +63,10 @@ const BookingRequests = () => {
             booked_by: selectedRequest.requested_by,
             in_time: selectedRequest.in_time,
             out_time: selectedRequest.out_time
+          },{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
         }
 
@@ -50,7 +74,11 @@ const BookingRequests = () => {
         await axios.patch(`http://127.0.0.1:8000/api/booking-requests/${selectedRequest.id}/`, {
           processed: true,
           booked_room: allocatedRoom
-        });
+        },{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
         fetchBookingRequests();
         fetchMeetingRooms();
@@ -58,13 +86,19 @@ const BookingRequests = () => {
         setAllocatedRoom('');
       } catch (error) {
         console.error('Failed to allocate room:', error);
+        window.location.href = '/login';
       }
     }
   };
 
   const handleAllocateAllRooms = async () => {
+    const token = localStorage.getItem('accessToken');
     try {
-      await axios.post('http://127.0.0.1:8000/api/allocate-all-rooms/');
+      await axios.post('http://127.0.0.1:8000/api/allocate-all-rooms/',{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchBookingRequests();
       fetchMeetingRooms();
     } catch (error) {

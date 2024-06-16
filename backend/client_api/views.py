@@ -9,6 +9,7 @@ from rest_framework import generics, status
 from django.contrib.auth import authenticate 
 from rest_framework.decorators import api_view
 from django.db.models import Q
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
 class Home(APIView):
     authentication_classes = [JWTAuthentication]
@@ -51,6 +52,8 @@ class LoginUser(APIView):
         # Perform custom password validation
         if user.password != password:
             return JsonResponse({"error": "Invalid username or password"}, status=400)
+        if user.username=="anshukumar-729":
+            return JsonResponse({"error": "Invalid username or password"}, status=400)
 
         # If you need to perform additional checks before generating tokens,
         # you can do that here
@@ -64,7 +67,31 @@ class LoginUser(APIView):
         })
 
         
+@api_view(['POST'])
+def admin_log_in(request):
+        username = request.data.get('username')
+        password = str(request.data.get('password'))
 
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({"error": "Invalid username or password"}, status=400)
+
+        # Perform custom password validation
+        if user.password != password:
+            return JsonResponse({"error": "Invalid username or password"}, status=400)
+        if user.username!="anshukumar-729":
+            return JsonResponse({"error": "Invalid username or password"}, status=400)
+        # If you need to perform additional checks before generating tokens,
+        # you can do that here
+
+        refresh = RefreshToken.for_user(user)
+
+        return JsonResponse({
+            "message": "Login successful",
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        })
         
 
 
@@ -86,6 +113,8 @@ class FloorPlanVersionListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = FloorPlanVersionSerializer
 
 class MeetingRoomListCreateAPIView(generics.ListCreateAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = MeetingRoom.objects.all()
     serializer_class = MeetingRoomSerializer
 
@@ -105,11 +134,15 @@ class MeetingRoomListCreateAPIView(generics.ListCreateAPIView):
         return JsonResponse({"message": "Meeting room deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
 class MeetingRoomRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = MeetingRoom.objects.all()
     serializer_class = MeetingRoomSerializer
 
 
 class BookingRequestListCreateAPIView(generics.ListCreateAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = BookingRequest.objects.all()
     serializer_class = BookingRequestSerializer
 
@@ -152,6 +185,8 @@ class BookingRequestListCreateAPIView(generics.ListCreateAPIView):
         return JsonResponse(serializer.data)
 
 class BookingRequestRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = BookingRequest.objects.all()
     serializer_class = BookingRequestSerializer
 

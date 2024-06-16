@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const RoomRequestForm = ({ fetchBookingRequests, loggedInUser }) => {
+    const token = localStorage.getItem('accessToken');
   const [formData, setFormData] = useState({
     requested_by: loggedInUser.username, // Assuming username is used
     number_of_people: 0,
@@ -12,7 +13,11 @@ const RoomRequestForm = ({ fetchBookingRequests, loggedInUser }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://127.0.0.1:8000/api/booking-requests/', formData);
+      await axios.post('http://127.0.0.1:8000/api/booking-requests/', formData,{
+        headers: {
+            Authorization: `Bearer ${token}`,
+          },
+      });
       setFormData({
         requested_by: loggedInUser.username,
         number_of_people: 0,

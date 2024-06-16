@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import (
 
 from .views import (
     Home, RegisterUser, LoginUser, FloorPlanListCreateAPIView, FloorPlanRetrieveUpdateDestroyAPIView, FloorPlanVersionListCreateAPIView,BookingRequestListCreateAPIView,
-    MeetingRoomListCreateAPIView, MeetingRoomRetrieveUpdateDestroyAPIView, BookingRequestRetrieveUpdateDestroyAPIView, allocate_all_rooms
+    MeetingRoomListCreateAPIView, MeetingRoomRetrieveUpdateDestroyAPIView, BookingRequestRetrieveUpdateDestroyAPIView, allocate_all_rooms, admin_log_in
 )
 urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -15,6 +15,7 @@ urlpatterns = [
     path('api/home/', Home.as_view(), name='home'),
     path('api/register/', RegisterUser.as_view(), name='register'),
     path('api/login/', LoginUser.as_view(), name='login'),
+    path('api/admin/login/', admin_log_in, name='admin-login'),
     path('api/floor-plans/', FloorPlanListCreateAPIView.as_view(), name='floor-plan-list-create'),
     path('api/floor-plans/<int:pk>/', FloorPlanRetrieveUpdateDestroyAPIView.as_view(), name='floor-plan-retrieve-update-destroy'),
     path('api/floor-plan-versions/', FloorPlanVersionListCreateAPIView.as_view(), name='floor-plan-version-list-create'),

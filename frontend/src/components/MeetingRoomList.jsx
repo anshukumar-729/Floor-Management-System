@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { checkAdmin } from '.././utils';
 const MeetingRoomList = () => {
+  const [admin, setAdmin] = useState(checkAdmin(localStorage.getItem('accessToken')));
   const [meetingRooms, setMeetingRooms] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -15,17 +16,24 @@ const MeetingRoomList = () => {
   const [numberOfPeople, setNumberOfPeople] = useState(0);
   const [bookingRoomId, setBookingRoomId] = useState(null);
   const [error, setError] = useState('');
+  const token = localStorage.getItem('accessToken');
 
   useEffect(() => {
     fetchMeetingRooms();
   }, []);
 
   const fetchMeetingRooms = async () => {
+
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/meeting-rooms/');
+      const response = await axios.get('http://127.0.0.1:8000/api/meeting-rooms/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setMeetingRooms(response.data);
     } catch (error) {
       console.error('Failed to fetch meeting rooms:', error);
+      window.location.href = '/login';
     }
   };
 
@@ -36,7 +44,20 @@ const MeetingRoomList = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://127.0.0.1:8000/api/meeting-rooms/', formData);
+      await axios.post('http://127.0.0.1:8000/api/meeting-rooms/', {
+        "name":formData.name,
+        "capacity": formData.capacity,
+        "floor":formData.floor,
+        "available":true,
+        "number_of_people":0,
+        "booked_by":"",
+        "in_time":null,
+        "out_time":null,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setFormData({
         name: '',
         capacity: '',
@@ -54,7 +75,11 @@ const MeetingRoomList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/meeting-rooms/${id}/`);
+      await axios.delete(`http://127.0.0.1:8000/api/meeting-rooms/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchMeetingRooms();
     } catch (error) {
       console.error('Failed to delete meeting room:', error);
@@ -69,7 +94,11 @@ const MeetingRoomList = () => {
         out_time: available ? null : new Date()  // Set out_time to null if available, or current timestamp if unavailable
       };
   
-      await axios.patch(`http://127.0.0.1:8000/api/meeting-rooms/${id}/`, updateData);
+      await axios.patch(`http://127.0.0.1:8000/api/meeting-rooms/${id}/`, updateData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchMeetingRooms();  // Refresh meeting rooms list after update
     } catch (error) {
       console.error('Failed to update availability:', error);
@@ -99,6 +128,10 @@ const MeetingRoomList = () => {
             booked_by: formData.booked_by,
             in_time: formData.in_time,
             out_time: formData.out_time
+          }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
           fetchMeetingRooms();
           closeBookingModal();
@@ -115,7 +148,8 @@ const MeetingRoomList = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-4">Meeting Rooms</h2>
+    {admin && <>
+        <h2 className="text-2xl font-bold mb-4">Meeting Rooms</h2>
       <form onSubmit={handleSubmit} className="mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <input
@@ -150,6 +184,8 @@ const MeetingRoomList = () => {
           Add Meeting Room
         </button>
       </form>
+    </>}
+      
 
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {meetingRooms.map(room => (
@@ -162,19 +198,19 @@ const MeetingRoomList = () => {
             {room.available ? (
               <div className="flex items-center mt-2">
                 <span className="text-green-500 mr-2">Empty</span>
-                <button onClick={() => openBookingModal(room.name)} className="text-blue-500 hover:underline focus:outline-none">Book</button>
+                {admin && <button onClick={() => openBookingModal(room.name)} className="text-blue-500 hover:underline focus:outline-none">Book</button>}
               </div>
             ) : (
               <div className="flex items-center mt-2">
                 <span className="text-red-500 mr-2">Booked ({room.number_of_people} people) by {room.booked_by}</span>
                 
-                  <button onClick={() => toggleAvailability(room.name, true)} className="ml-4 text-blue-500 hover:underline focus:outline-none">Mark as Empty</button>
+                  {admin && <button onClick={() => toggleAvailability(room.name, true)} className="ml-4 text-blue-500 hover:underline focus:outline-none">Mark as Empty</button>}
                 
               </div>
             )}
-            <button onClick={() => handleDelete(room.name)} className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300">
+            {admin && <button onClick={() => handleDelete(room.name)} className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300">
               Delete
-            </button>
+            </button>}
           </li>
         ))}
       </ul>
