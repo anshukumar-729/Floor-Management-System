@@ -22,11 +22,12 @@ Sqlite3 DB //
 Django
 
 ## Installation
-
+```
 git clone https://github.com/anshukumar-729/Floor-Management-System.git
-cd Floor-Management-System/backend
+cd to Floor-Management-System/backend
 python3 manage.py runserver
-cd Floor-Management-System/frontend
+cd to Floor-Management-System/frontend
 npm i -y
 npm start
+```
 
