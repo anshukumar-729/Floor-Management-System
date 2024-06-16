@@ -13,6 +13,7 @@ const SyncOfflineData = () => {
     } catch (error) {
       console.error('Error synchronizing data:', error);
       alert('Failed to sync data. Please try again later.');
+      window.location.href = '/login';
     }
   };
 

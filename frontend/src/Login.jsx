@@ -1,5 +1,3 @@
-// src/Login.js
-
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
@@ -24,6 +22,22 @@ const Login = () => {
       window.location.href = '/home';
     } catch (err) {
       setError('Invalid login credentials');
+    }
+  };
+
+  const handleAdminLogin = async () => {
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/admin/login/', {
+        username,
+        password,
+      });
+
+      localStorage.setItem('user', username);
+      localStorage.setItem('accessToken', response.data.access);
+      localStorage.setItem('refreshToken', response.data.refresh);
+      window.location.href = '/home'; // Redirect to admin dashboard or appropriate route
+    } catch (err) {
+      setError('Invalid admin login credentials');
     }
   };
 
@@ -57,6 +71,13 @@ const Login = () => {
         <p className="text-sm mt-4">
           Don't have an account? <Link to="/register" className="text-blue-500">Register here</Link>
         </p>
+        {/* Admin Login Button */}
+        <button
+          onClick={handleAdminLogin}
+          className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded"
+        >
+          Admin Login
+        </button>
       </div>
     </div>
   );

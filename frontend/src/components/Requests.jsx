@@ -4,6 +4,7 @@ import RoomRequestForm from './RoomRequestForm';
 import PreviousRequests from './PreviousRequests';
 
 const Requests = () => {
+    const token = localStorage.getItem('accessToken');
   const [bookingRequests, setBookingRequests] = useState([]);
   const loggedInUser = {
     "username": localStorage.getItem('user')
@@ -17,11 +18,15 @@ const Requests = () => {
       const response = await axios.get('http://127.0.0.1:8000/api/booking-requests/', {
         params: {
           requested_by: loggedInUser.username // Adjust according to your backend API
-        }
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       setBookingRequests(response.data);
     } catch (error) {
       console.error('Failed to fetch booking requests:', error);
+      window.location.href = '/login';
     }
   };
 
